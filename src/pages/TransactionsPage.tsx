@@ -18,12 +18,10 @@ const transactions = [
   { id: 1, type: 'dailyInterest', packageName: '90-Day Lock', amount: 16.44, date: '2024-01-20', status: 'success' },
   { id: 2, type: 'dailyInterest', packageName: '60-Day Lock', amount: 8.35, date: '2024-01-20', status: 'success' },
   { id: 3, type: 'dailyInterest', packageName: '30-Day Lock', amount: 2.32, date: '2024-01-20', status: 'pending' },
-  { id: 4, type: 'subscription', packageName: '30-Day Lock', amount: -10000, date: '2024-01-20', status: 'success' },
-  { id: 5, type: 'dailyInterest', packageName: '90-Day Lock', amount: 16.44, date: '2024-01-19', status: 'success' },
-  { id: 6, type: 'dailyInterest', packageName: '60-Day Lock', amount: 8.35, date: '2024-01-19', status: 'success' },
-  { id: 7, type: 'withdrawal', packageName: '-', amount: 500, date: '2024-01-18', status: 'success' },
-  { id: 8, type: 'maturityPayout', packageName: '30-Day Lock (Old)', amount: 5215.50, date: '2024-01-15', status: 'success' },
-  { id: 9, type: 'earlyRedemption', packageName: '60-Day Lock (Old)', amount: 14850.00, date: '2024-01-10', status: 'failed' },
+  { id: 4, type: 'dailyInterest', packageName: '90-Day Lock', amount: 16.44, date: '2024-01-19', status: 'success' },
+  { id: 5, type: 'earlyRedemption', packageName: '30-Day Lock', amount: 500, date: '2024-01-18', status: 'success' },
+  { id: 6, type: 'redemption', packageName: '30-Day Lock (Old)', amount: 5215.50, date: '2024-01-15', status: 'success' },
+  { id: 7, type: 'earlyRedemption', packageName: '60-Day Lock (Old)', amount: 14850.00, date: '2024-01-10', status: 'failed' },
 ];
 
 export default function TransactionsPage() {
@@ -41,11 +39,9 @@ export default function TransactionsPage() {
 
   const getTypeLabel = (type: string) => {
     const labels: Record<string, string> = {
-      dailyInterest: t('transactions.dailyInterest'),
-      earlyRedemption: t('transactions.earlyRedemption'),
-      maturityPayout: t('transactions.maturityPayout'),
-      withdrawal: t('transactions.withdrawal'),
-      subscription: t('transactions.subscription'),
+      dailyInterest: 'Daily Interest',
+      earlyRedemption: 'Early Redemption',
+      redemption: 'Redemption',
     };
     return labels[type] || type;
   };
@@ -95,11 +91,9 @@ export default function TransactionsPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">{t('common.all')}</SelectItem>
-                  <SelectItem value="dailyInterest">{t('transactions.dailyInterest')}</SelectItem>
-                  <SelectItem value="earlyRedemption">{t('transactions.earlyRedemption')}</SelectItem>
-                  <SelectItem value="maturityPayout">{t('transactions.maturityPayout')}</SelectItem>
-                  <SelectItem value="withdrawal">{t('transactions.withdrawal')}</SelectItem>
-                  <SelectItem value="subscription">{t('transactions.subscription')}</SelectItem>
+                  <SelectItem value="dailyInterest">Daily Interest</SelectItem>
+                  <SelectItem value="earlyRedemption">Early Redemption</SelectItem>
+                  <SelectItem value="redemption">Redemption</SelectItem>
                 </SelectContent>
               </Select>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -113,10 +107,6 @@ export default function TransactionsPage() {
                   <SelectItem value="failed">{t('common.failed')}</SelectItem>
                 </SelectContent>
               </Select>
-              <Button variant="outline" className="gap-2">
-                <Calendar className="w-4 h-4" />
-                Date Range
-              </Button>
             </div>
           </div>
         </div>

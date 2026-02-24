@@ -1,10 +1,10 @@
 import { useLanguage } from '@/contexts/LanguageContext';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { Button } from '@/components/ui/button';
-import { 
-  Bell, 
-  TrendingUp, 
-  CheckCircle2, 
+import {
+  Bell,
+  TrendingUp,
+  CheckCircle2,
   Clock,
   AlertTriangle,
   Info,
@@ -25,17 +25,17 @@ const notifications = [
   },
   {
     id: 2,
-    type: 'interest',
-    title: 'Daily Interest Credited',
-    message: 'You have earned $8.35 interest from your 60-Day Lock package.',
-    timestamp: '2024-01-20 09:00',
+    type: 'early_redeemed',
+    title: 'Early Redemption Processed',
+    message: 'Your 60-Day Lock package was redeemed early. Funds have been returned to your wallet.',
+    timestamp: '2024-01-20 09:30',
     read: false,
   },
   {
     id: 3,
-    type: 'pending',
-    title: 'Transaction Pending',
-    message: 'Your withdrawal request of $500 is being processed. This may take up to 24 hours.',
+    type: 'redeemed',
+    title: 'Package Redeemed Successfully',
+    message: 'Your 30-Day Lock package reached maturity and was fully redeemed.',
     timestamp: '2024-01-19 14:30',
     read: true,
   },
@@ -55,14 +55,6 @@ const notifications = [
     timestamp: '2024-01-17 08:00',
     read: true,
   },
-  {
-    id: 6,
-    type: 'interest',
-    title: 'Daily Interest Credited',
-    message: 'You have earned $16.44 interest from your 90-Day Lock package.',
-    timestamp: '2024-01-19 09:00',
-    read: true,
-  },
 ];
 
 export default function NotificationsPage() {
@@ -74,8 +66,9 @@ export default function NotificationsPage() {
   const getIcon = (type: string) => {
     const icons: Record<string, React.ElementType> = {
       interest: TrendingUp,
+      early_redeemed: Clock,
+      redeemed: CheckCircle2,
       maturity: CheckCircle2,
-      pending: Clock,
       warning: AlertTriangle,
       system: Info,
     };
@@ -85,8 +78,9 @@ export default function NotificationsPage() {
   const getIconStyle = (type: string) => {
     const styles: Record<string, string> = {
       interest: 'bg-success/10 text-success',
+      early_redeemed: 'bg-warning/10 text-warning',
+      redeemed: 'bg-success/10 text-success',
       maturity: 'bg-accent/10 text-accent',
-      pending: 'bg-warning/10 text-warning',
       warning: 'bg-destructive/10 text-destructive',
       system: 'bg-info/10 text-info',
     };
@@ -98,7 +92,7 @@ export default function NotificationsPage() {
   };
 
   const markAsRead = (id: number) => {
-    setItems(items.map(item => 
+    setItems(items.map(item =>
       item.id === id ? { ...item, read: true } : item
     ));
   };
@@ -127,7 +121,7 @@ export default function NotificationsPage() {
           {items.map((notification) => {
             const Icon = getIcon(notification.type);
             return (
-              <div 
+              <div
                 key={notification.id}
                 onClick={() => markAsRead(notification.id)}
                 className={cn(

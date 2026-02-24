@@ -2,8 +2,8 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { 
-  Clock, 
+import {
+  Clock,
   AlertTriangle,
   Eye,
   RefreshCw
@@ -131,7 +131,6 @@ export default function AdminPendingPage() {
                   <th>{t('admin.pending.reason')}</th>
                   <th>{t('admin.pending.waitingTime')}</th>
                   <th>{t('common.status')}</th>
-                  <th>{t('common.action')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -153,11 +152,6 @@ export default function AdminPendingPage() {
                         </div>
                       </td>
                       <td>{getStatusBadge(tx.status)}</td>
-                      <td>
-                        <Button variant="ghost" size="sm">
-                          <Eye className="w-4 h-4" />
-                        </Button>
-                      </td>
                     </tr>
                   );
                 })}

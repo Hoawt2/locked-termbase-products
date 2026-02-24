@@ -1,4 +1,4 @@
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
 import {
@@ -12,6 +12,7 @@ import {
   Wrench,
   ChevronLeft,
   ChevronRight,
+  LogOut,
 } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
@@ -20,10 +21,15 @@ interface SidebarProps {
   isAdmin?: boolean;
 }
 
-export function Sidebar({ isAdmin = false }: SidebarProps) {
+export function Sidebar({ isAdmin: propIsAdmin = false }: SidebarProps) {
   const { t } = useLanguage();
   const location = useLocation();
+  const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
+
+  // Check login role
+  const role = localStorage.getItem('userRole');
+  const isAdmin = propIsAdmin || role === 'admin';
 
   const userLinks = [
     { to: '/dashboard', icon: LayoutDashboard, label: t('nav.dashboard') },
@@ -41,10 +47,15 @@ export function Sidebar({ isAdmin = false }: SidebarProps) {
 
   const links = isAdmin ? adminLinks : userLinks;
 
+  const handleSwitchAccount = () => {
+    localStorage.removeItem('userRole');
+    navigate('/login');
+  };
+
   return (
-    <aside 
+    <aside
       className={cn(
-        "bg-sidebar border-r border-sidebar-border transition-all duration-300 flex flex-col",
+        "bg-sidebar border-r border-sidebar-border transition-all duration-300 flex flex-col sticky top-16 h-[calc(100vh-4rem)]",
         collapsed ? "w-16" : "w-60"
       )}
     >
@@ -69,41 +80,25 @@ export function Sidebar({ isAdmin = false }: SidebarProps) {
             );
           })}
         </nav>
-
-        {!isAdmin && (
-          <div className="mt-6 pt-6 border-t border-sidebar-border mx-2">
-            <div className="px-2 mb-2">
-              {!collapsed && (
-                <span className="text-xs font-medium text-sidebar-foreground/60 uppercase tracking-wider">
-                  {t('nav.admin')}
-                </span>
-              )}
-            </div>
-            <nav className="space-y-1 px-2">
-              {adminLinks.map((link) => {
-                const isActive = location.pathname === link.to;
-                return (
-                  <NavLink
-                    key={link.to}
-                    to={link.to}
-                    className={cn(
-                      "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
-                      isActive
-                        ? "bg-sidebar-accent text-sidebar-primary"
-                        : "text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground"
-                    )}
-                  >
-                    <link.icon className="w-5 h-5 flex-shrink-0" />
-                    {!collapsed && <span>{link.label}</span>}
-                  </NavLink>
-                );
-              })}
-            </nav>
-          </div>
-        )}
       </div>
 
-      <div className="p-2 border-t border-sidebar-border">
+      <div className="p-2 border-t border-sidebar-border flex flex-col gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleSwitchAccount}
+          className="w-full justify-center text-destructive hover:bg-destructive/10 border-destructive hover:text-destructive"
+        >
+          {collapsed ? (
+            <LogOut className="w-4 h-4 ml-2" />
+          ) : (
+            <>
+              <LogOut className="w-4 h-4 mr-2" />
+              <span>Switch Account</span>
+            </>
+          )}
+        </Button>
+
         <Button
           variant="ghost"
           size="sm"
