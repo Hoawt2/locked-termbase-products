@@ -16,6 +16,7 @@ import NotificationsPage from "./pages/NotificationsPage";
 import AdminLiquidityPage from "./pages/admin/AdminLiquidityPage";
 import AdminPendingPage from "./pages/admin/AdminPendingPage";
 import AdminManualPage from "./pages/admin/AdminManualPage";
+import LoginPage from "./pages/LoginPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,22 +31,23 @@ const App = () => (
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<LandingPage />} />
+            <Route path="/login" element={<LoginPage />} />
             <Route path="/products" element={<ProductsPage />} />
             <Route path="/products/:id" element={<ProductDetailPage />} />
             <Route path="/products/:id/subscribe" element={<SubscribePage />} />
-            
+
             {/* User Routes */}
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/packages" element={<ActivePackagesPage />} />
             <Route path="/history" element={<InvestmentHistoryPage />} />
             <Route path="/transactions" element={<TransactionsPage />} />
             <Route path="/notifications" element={<NotificationsPage />} />
-            
+
             {/* Admin Routes */}
             <Route path="/admin/liquidity" element={<AdminLiquidityPage />} />
             <Route path="/admin/pending" element={<AdminPendingPage />} />
             <Route path="/admin/manual" element={<AdminManualPage />} />
-            
+
             {/* Catch-all */}
             <Route path="*" element={<NotFound />} />
           </Routes>

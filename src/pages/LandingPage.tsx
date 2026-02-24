@@ -113,7 +113,7 @@ export default function LandingPage() {
                 {t('landing.exploreProducts')}
                 <ArrowRight className="w-5 h-5" />
               </Button>
-              <Link to="/dashboard">
+              <Link to="/login">
                 <Button size="lg" variant="outline" className="bg-transparent border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10">
                   {t('nav.dashboard')}
                 </Button>
