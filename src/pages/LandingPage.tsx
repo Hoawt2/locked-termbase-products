@@ -27,6 +27,8 @@ function ProductCard({ product }: { product: typeof products[0] }) {
   const status = statusConfig[product.status as keyof typeof statusConfig];
   const isAvailable = product.status === 'active';
 
+  const userRole = localStorage.getItem('userRole');
+
   return (
     <div className={cn(
       "data-card group hover:shadow-lg transition-all duration-300",
@@ -70,7 +72,7 @@ function ProductCard({ product }: { product: typeof products[0] }) {
           </Button>
         </Link>
         {isAvailable && (
-          <Link to={`/products/${product.id}/subscribe`} className="flex-1">
+          <Link to={userRole ? `/products/${product.id}/subscribe` : "/login"} className="flex-1">
             <Button className="w-full bg-accent hover:bg-accent/90 text-accent-foreground" size="sm">
               {t('common.subscribe')}
             </Button>

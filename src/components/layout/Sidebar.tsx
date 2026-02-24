@@ -36,7 +36,6 @@ export function Sidebar({ isAdmin: propIsAdmin = false }: SidebarProps) {
     { to: '/packages', icon: Package, label: t('nav.activePackages') },
     { to: '/history', icon: History, label: t('nav.investmentHistory') },
     { to: '/transactions', icon: Receipt, label: t('nav.transactions') },
-    { to: '/notifications', icon: Bell, label: t('nav.notifications') },
   ];
 
   const adminLinks = [

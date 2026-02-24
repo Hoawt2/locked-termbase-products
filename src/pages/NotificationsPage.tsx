@@ -27,8 +27,16 @@ const notifications = [
     id: 2,
     type: 'early_redeemed',
     title: 'Early Redemption Processed',
-    message: 'Your 60-Day Lock package was redeemed early. Funds have been returned to your wallet.',
+    message: 'Your 60-Day Lock package was redeemed early. Funds have been successfully returned to your wallet.',
     timestamp: '2024-01-20 09:30',
+    read: false,
+  },
+  {
+    id: 6,
+    type: 'processing',
+    title: 'Early Redemption is Processing',
+    message: 'Your transaction is currently being processed and will be completed shortly.',
+    timestamp: '2024-01-20 10:15',
     read: false,
   },
   {
@@ -66,8 +74,9 @@ export default function NotificationsPage() {
   const getIcon = (type: string) => {
     const icons: Record<string, React.ElementType> = {
       interest: TrendingUp,
-      early_redeemed: Clock,
+      early_redeemed: CheckCircle2,
       redeemed: CheckCircle2,
+      processing: Clock,
       maturity: CheckCircle2,
       warning: AlertTriangle,
       system: Info,
@@ -78,8 +87,9 @@ export default function NotificationsPage() {
   const getIconStyle = (type: string) => {
     const styles: Record<string, string> = {
       interest: 'bg-success/10 text-success',
-      early_redeemed: 'bg-warning/10 text-warning',
+      early_redeemed: 'bg-success/10 text-success',
       redeemed: 'bg-success/10 text-success',
+      processing: 'bg-warning/10 text-warning',
       maturity: 'bg-accent/10 text-accent',
       warning: 'bg-destructive/10 text-destructive',
       system: 'bg-info/10 text-info',
