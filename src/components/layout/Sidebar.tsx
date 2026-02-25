@@ -13,6 +13,7 @@ import {
   ChevronLeft,
   ChevronRight,
   LogOut,
+  ArrowDownToLine,
 } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
@@ -34,6 +35,7 @@ export function Sidebar({ isAdmin: propIsAdmin = false }: SidebarProps) {
   const userLinks = [
     { to: '/dashboard', icon: LayoutDashboard, label: t('nav.dashboard') },
     { to: '/packages', icon: Package, label: t('nav.activePackages') },
+    { to: '/withdraw', icon: ArrowDownToLine, label: t('nav.withdraw') },
     { to: '/history', icon: History, label: t('nav.investmentHistory') },
     { to: '/transactions', icon: Receipt, label: t('nav.transactions') },
   ];

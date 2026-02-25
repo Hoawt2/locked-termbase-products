@@ -2,10 +2,9 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { 
-  Eye, 
-  Clock, 
-  ArrowDownToLine,
+import {
+  Eye,
+  Clock,
   Info,
   AlertTriangle
 } from 'lucide-react';
@@ -88,9 +87,9 @@ function EarlyRedemptionDialog({ pkg }: { pkg: typeof activePackages[0] }) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button 
-          variant="outline" 
-          size="sm" 
+        <Button
+          variant="outline"
+          size="sm"
           className="text-destructive border-destructive/30 hover:bg-destructive/10"
           disabled={!pkg.earlyRedemptionEligible}
         >
@@ -108,7 +107,7 @@ function EarlyRedemptionDialog({ pkg }: { pkg: typeof activePackages[0] }) {
             {t('redemption.warning')}
           </DialogDescription>
         </DialogHeader>
-        
+
         <div className="space-y-4 py-4">
           <div className="p-4 bg-secondary/50 rounded-lg space-y-3">
             <div className="flex justify-between">
@@ -146,7 +145,7 @@ function EarlyRedemptionDialog({ pkg }: { pkg: typeof activePackages[0] }) {
 
         <DialogFooter className="gap-2">
           <Button variant="outline">{t('common.cancel')}</Button>
-          <Button 
+          <Button
             onClick={handleConfirm}
             disabled={isConfirming}
             className="bg-destructive hover:bg-destructive/90"
@@ -159,58 +158,7 @@ function EarlyRedemptionDialog({ pkg }: { pkg: typeof activePackages[0] }) {
   );
 }
 
-function WithdrawDialog({ pkg }: { pkg: typeof activePackages[0] }) {
-  const { t } = useLanguage();
-  const [isConfirming, setIsConfirming] = useState(false);
 
-  const handleConfirm = () => {
-    setIsConfirming(true);
-    setTimeout(() => {
-      setIsConfirming(false);
-    }, 2000);
-  };
-
-  if (pkg.availableAmount === 0) return null;
-
-  return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="outline" size="sm">
-          <ArrowDownToLine className="w-4 h-4 mr-1" />
-          {t('packages.withdraw')}
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>{t('withdraw.title')}</DialogTitle>
-          <DialogDescription>
-            {t('withdraw.confirmMessage')}
-          </DialogDescription>
-        </DialogHeader>
-        
-        <div className="space-y-4 py-4">
-          <div className="p-4 bg-secondary/50 rounded-lg">
-            <div className="flex justify-between items-center">
-              <span className="text-muted-foreground">{t('withdraw.availableToWithdraw')}</span>
-              <span className="text-2xl font-bold text-accent">${pkg.availableAmount.toLocaleString()}</span>
-            </div>
-          </div>
-        </div>
-
-        <DialogFooter className="gap-2">
-          <Button variant="outline">{t('common.cancel')}</Button>
-          <Button 
-            onClick={handleConfirm}
-            disabled={isConfirming}
-            className="bg-accent hover:bg-accent/90"
-          >
-            {isConfirming ? t('common.loading') : t('common.confirm')}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  );
-}
 
 export default function ActivePackagesPage() {
   const { t } = useLanguage();
@@ -300,7 +248,6 @@ export default function ActivePackagesPage() {
                           <Button variant="ghost" size="sm">
                             <Eye className="w-4 h-4" />
                           </Button>
-                          <WithdrawDialog pkg={pkg} />
                           <EarlyRedemptionDialog pkg={pkg} />
                         </div>
                       </td>

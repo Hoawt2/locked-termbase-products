@@ -10,6 +10,7 @@ import ProductsPage from "./pages/ProductsPage";
 import ProductDetailPage from "./pages/ProductDetailPage";
 import SubscribePage from "./pages/SubscribePage";
 import ActivePackagesPage from "./pages/ActivePackagesPage";
+import WithdrawPage from "./pages/WithdrawPage";
 import InvestmentHistoryPage from "./pages/InvestmentHistoryPage";
 import TransactionsPage from "./pages/TransactionsPage";
 import NotificationsPage from "./pages/NotificationsPage";
@@ -39,6 +40,7 @@ const App = () => (
             {/* User Routes */}
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/packages" element={<ActivePackagesPage />} />
+            <Route path="/withdraw" element={<WithdrawPage />} />
             <Route path="/history" element={<InvestmentHistoryPage />} />
             <Route path="/transactions" element={<TransactionsPage />} />
             <Route path="/notifications" element={<NotificationsPage />} />

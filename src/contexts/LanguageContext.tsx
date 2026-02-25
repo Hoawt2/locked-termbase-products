@@ -18,6 +18,7 @@ const translations: Record<Language, Record<string, string>> = {
     'nav.dashboard': 'Dashboard',
     'nav.products': 'Products',
     'nav.activePackages': 'Active Packages',
+    'nav.withdraw': 'Withdraw Available',
     'nav.investmentHistory': 'Investment History',
     'nav.transactions': 'Transactions',
     'nav.notifications': 'Notifications',
@@ -26,7 +27,7 @@ const translations: Record<Language, Record<string, string>> = {
     'nav.pending': 'Pending Transactions',
     'nav.manual': 'Manual Handling',
     'nav.logout': 'Logout',
-    
+
     // Common
     'common.viewDetails': 'View Details',
     'common.subscribe': 'Subscribe',
@@ -49,7 +50,7 @@ const translations: Record<Language, Record<string, string>> = {
     'common.search': 'Search',
     'common.filter': 'Filter',
     'common.all': 'All',
-    
+
     // Landing Page
     'landing.title': 'Locked Asset Products',
     'landing.subtitle': 'Grow your wealth with fixed-term investments',
@@ -60,7 +61,7 @@ const translations: Record<Language, Record<string, string>> = {
     'landing.minAmount': 'Min Amount',
     'landing.maxAmount': 'Max Amount',
     'landing.quota': 'Available Quota',
-    
+
     // Dashboard
     'dashboard.title': 'Dashboard',
     'dashboard.welcome': 'Welcome back',
@@ -71,7 +72,7 @@ const translations: Record<Language, Record<string, string>> = {
     'dashboard.activeSummary': 'Active Packages Summary',
     'dashboard.recentActivity': 'Recent Activity',
     'dashboard.quickActions': 'Quick Actions',
-    
+
     // Active Packages
     'packages.title': 'Active Packages',
     'packages.principal': 'Principal',
@@ -84,7 +85,7 @@ const translations: Record<Language, Record<string, string>> = {
     'packages.earlyRedemption': 'Early Redemption',
     'packages.withdraw': 'Withdraw Available',
     'packages.noPackages': 'No active packages found',
-    
+
     // Early Redemption
     'redemption.title': 'Early Redemption',
     'redemption.warning': 'Early redemption will incur a penalty',
@@ -93,20 +94,23 @@ const translations: Record<Language, Record<string, string>> = {
     'redemption.penaltyAmount': 'Penalty Amount',
     'redemption.finalAmount': 'Final Receivable Amount',
     'redemption.confirmMessage': 'Are you sure you want to proceed with early redemption?',
-    
+
     // Withdraw
     'withdraw.title': 'Withdraw Available Amount',
+    'withdraw.subtitle': 'Withdraw your accumulated interest and available funds.',
     'withdraw.availableToWithdraw': 'Available to Withdraw',
     'withdraw.destination': 'Destination Wallet',
     'withdraw.confirmMessage': 'Confirm withdrawal to your wallet?',
-    
+    'withdraw.errorMin': 'Please enter a valid amount greater than 0.',
+    'withdraw.errorMax': 'Withdrawal amount exceeds available balance.',
+
     // Investment History
     'history.title': 'Investment History',
     'history.matured': 'Matured',
     'history.earlyRedeemed': 'Early Redeemed',
     'history.finalAmount': 'Final Amount',
     'history.completedDate': 'Completed Date',
-    
+
     // Transactions
     'transactions.title': 'Transaction History',
     'transactions.type': 'Transaction Type',
@@ -115,7 +119,7 @@ const translations: Record<Language, Record<string, string>> = {
     'transactions.maturityPayout': 'Maturity Payout',
     'transactions.withdrawal': 'Withdrawal',
     'transactions.subscription': 'Subscription',
-    
+
     // Notifications
     'notifications.title': 'Notifications',
     'notifications.markAllRead': 'Mark All Read',
@@ -124,7 +128,7 @@ const translations: Record<Language, Record<string, string>> = {
     'notifications.maturityReached': 'Maturity Reached',
     'notifications.transactionPending': 'Transaction Pending',
     'notifications.systemMessage': 'System Message',
-    
+
     // Admin - Liquidity
     'admin.liquidity.title': 'Liquidity Monitoring Dashboard',
     'admin.liquidity.totalLiquidity': 'Total Liquidity',
@@ -135,20 +139,20 @@ const translations: Record<Language, Record<string, string>> = {
     'admin.liquidity.critical': 'Critical',
     'admin.liquidity.inject': 'Inject Liquidity',
     'admin.liquidity.reason': 'Reason',
-    
+
     // Admin - Pending
     'admin.pending.title': 'Pending Transactions',
     'admin.pending.waitingTime': 'Waiting Time',
     'admin.pending.reason': 'Reason',
     'admin.pending.noTransactions': 'No pending transactions',
-    
+
     // Admin - Manual
     'admin.manual.title': 'Manual Handling',
     'admin.manual.forceApprove': 'Force Approve',
     'admin.manual.reject': 'Reject',
     'admin.manual.notes': 'Notes (Required)',
     'admin.manual.exceptional': 'Exceptional Cases',
-    
+
     // Product Detail
     'product.details': 'Product Details',
     'product.rules': 'Product Rules',
@@ -159,7 +163,7 @@ const translations: Record<Language, Record<string, string>> = {
     'product.confirmSubscription': 'Confirm Subscription',
     'product.subscriptionSuccess': 'Subscription Successful!',
     'product.subscriptionFailed': 'Subscription Failed',
-    
+
     // Tooltips
     'tooltip.t1Interest': 'Interest calculation starts from T+1 (next day after subscription)',
     'tooltip.frozenBalance': 'Amount locked in active packages',
@@ -173,6 +177,7 @@ const translations: Record<Language, Record<string, string>> = {
     'nav.dashboard': 'Bảng điều khiển',
     'nav.products': 'Sản phẩm',
     'nav.activePackages': 'Gói đang hoạt động',
+    'nav.withdraw': 'Rút tiền khả dụng',
     'nav.investmentHistory': 'Lịch sử đầu tư',
     'nav.transactions': 'Giao dịch',
     'nav.notifications': 'Thông báo',
@@ -181,7 +186,7 @@ const translations: Record<Language, Record<string, string>> = {
     'nav.pending': 'Giao dịch chờ xử lý',
     'nav.manual': 'Xử lý thủ công',
     'nav.logout': 'Đăng xuất',
-    
+
     // Common
     'common.viewDetails': 'Xem chi tiết',
     'common.subscribe': 'Đăng ký',
@@ -204,7 +209,7 @@ const translations: Record<Language, Record<string, string>> = {
     'common.search': 'Tìm kiếm',
     'common.filter': 'Lọc',
     'common.all': 'Tất cả',
-    
+
     // Landing Page
     'landing.title': 'Sản phẩm Tài sản Khóa',
     'landing.subtitle': 'Gia tăng tài sản với đầu tư có kỳ hạn',
@@ -215,7 +220,7 @@ const translations: Record<Language, Record<string, string>> = {
     'landing.minAmount': 'Số tiền tối thiểu',
     'landing.maxAmount': 'Số tiền tối đa',
     'landing.quota': 'Hạn mức còn lại',
-    
+
     // Dashboard
     'dashboard.title': 'Bảng điều khiển',
     'dashboard.welcome': 'Chào mừng trở lại',
@@ -226,7 +231,7 @@ const translations: Record<Language, Record<string, string>> = {
     'dashboard.activeSummary': 'Tóm tắt gói hoạt động',
     'dashboard.recentActivity': 'Hoạt động gần đây',
     'dashboard.quickActions': 'Thao tác nhanh',
-    
+
     // Active Packages
     'packages.title': 'Gói đang hoạt động',
     'packages.principal': 'Vốn gốc',
@@ -239,7 +244,7 @@ const translations: Record<Language, Record<string, string>> = {
     'packages.earlyRedemption': 'Tất toán sớm',
     'packages.withdraw': 'Rút tiền khả dụng',
     'packages.noPackages': 'Không có gói hoạt động',
-    
+
     // Early Redemption
     'redemption.title': 'Tất toán sớm',
     'redemption.warning': 'Tất toán sớm sẽ chịu phí phạt',
@@ -248,20 +253,23 @@ const translations: Record<Language, Record<string, string>> = {
     'redemption.penaltyAmount': 'Số tiền phạt',
     'redemption.finalAmount': 'Số tiền nhận cuối cùng',
     'redemption.confirmMessage': 'Bạn có chắc muốn tiến hành tất toán sớm?',
-    
+
     // Withdraw
     'withdraw.title': 'Rút số tiền khả dụng',
+    'withdraw.subtitle': 'Rút lợi tức tích lũy và số dư khả dụng của bạn.',
     'withdraw.availableToWithdraw': 'Có thể rút',
     'withdraw.destination': 'Ví đích',
     'withdraw.confirmMessage': 'Xác nhận rút tiền về ví của bạn?',
-    
+    'withdraw.errorMin': 'Vui lòng nhập số tiền hợp lệ lớn hơn 0.',
+    'withdraw.errorMax': 'Số tiền cần rút vượt quá số dư khả dụng.',
+
     // Investment History
     'history.title': 'Lịch sử đầu tư',
     'history.matured': 'Đã đáo hạn',
     'history.earlyRedeemed': 'Tất toán sớm',
     'history.finalAmount': 'Số tiền cuối',
     'history.completedDate': 'Ngày hoàn thành',
-    
+
     // Transactions
     'transactions.title': 'Lịch sử giao dịch',
     'transactions.type': 'Loại giao dịch',
@@ -270,7 +278,7 @@ const translations: Record<Language, Record<string, string>> = {
     'transactions.maturityPayout': 'Chi trả đáo hạn',
     'transactions.withdrawal': 'Rút tiền',
     'transactions.subscription': 'Đăng ký',
-    
+
     // Notifications
     'notifications.title': 'Thông báo',
     'notifications.markAllRead': 'Đánh dấu đã đọc',
@@ -279,7 +287,7 @@ const translations: Record<Language, Record<string, string>> = {
     'notifications.maturityReached': 'Đã đáo hạn',
     'notifications.transactionPending': 'Giao dịch đang chờ',
     'notifications.systemMessage': 'Thông báo hệ thống',
-    
+
     // Admin - Liquidity
     'admin.liquidity.title': 'Bảng giám sát thanh khoản',
     'admin.liquidity.totalLiquidity': 'Tổng thanh khoản',
@@ -290,20 +298,20 @@ const translations: Record<Language, Record<string, string>> = {
     'admin.liquidity.critical': 'Nghiêm trọng',
     'admin.liquidity.inject': 'Bổ sung thanh khoản',
     'admin.liquidity.reason': 'Lý do',
-    
+
     // Admin - Pending
     'admin.pending.title': 'Giao dịch chờ xử lý',
     'admin.pending.waitingTime': 'Thời gian chờ',
     'admin.pending.reason': 'Lý do',
     'admin.pending.noTransactions': 'Không có giao dịch chờ',
-    
+
     // Admin - Manual
     'admin.manual.title': 'Xử lý thủ công',
     'admin.manual.forceApprove': 'Phê duyệt bắt buộc',
     'admin.manual.reject': 'Từ chối',
     'admin.manual.notes': 'Ghi chú (Bắt buộc)',
     'admin.manual.exceptional': 'Trường hợp ngoại lệ',
-    
+
     // Product Detail
     'product.details': 'Chi tiết sản phẩm',
     'product.rules': 'Quy tắc sản phẩm',
@@ -314,7 +322,7 @@ const translations: Record<Language, Record<string, string>> = {
     'product.confirmSubscription': 'Xác nhận đăng ký',
     'product.subscriptionSuccess': 'Đăng ký thành công!',
     'product.subscriptionFailed': 'Đăng ký thất bại',
-    
+
     // Tooltips
     'tooltip.t1Interest': 'Tính lãi bắt đầu từ T+1 (ngày tiếp theo sau đăng ký)',
     'tooltip.frozenBalance': 'Số tiền bị khóa trong các gói đang hoạt động',
