@@ -1,0 +1,761 @@
+openapi: 3.1.0
+info:
+  title: OpenAPI definition
+  version: v0
+servers:
+- url: http://localhost:8080
+  description: Generated server url
+tags:
+- name: CMS - Liquidity Pool
+  description: Manage liquidity pool and admin injections
+- name: CMS - User Wallet
+  description: CMS APIs for managing user wallets
+- name: User Wallet
+  description: APIs for user wallet operations
+- name: CMS - Locked Products
+  description: CMS APIs for managing locked-term saving products
+- name: User - Subscriptions
+  description: User APIs for creating and viewing locked-term subscriptions
+- name: User - Locked Products
+  description: User APIs for viewing available locked-term saving products
+- name: CMS - Subscription Jobs
+  description: CMS endpoints for triggering subscription background jobs
+paths:
+  /api/user/wallet:
+    get:
+      tags:
+      - User Wallet
+      summary: Get current user's wallet
+      description: Retrieve wallet information using wallet ID from request header
+      operationId: getWallet
+      parameters:
+      - name: X-WALLET-ID
+        in: header
+        description: Wallet ID of current user
+        required: true
+        schema:
+          type: string
+        example: 3ff732cb-cf34-41fe-b587-3d2e8cb93c68
+      responses:
+        "200":
+          description: Wallet retrieved successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseDTOUserWalletResponse"
+        "404":
+          description: Wallet not found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseDTOUserWalletResponse"
+    post:
+      tags:
+      - User Wallet
+      summary: Create wallet
+      description: Create a new wallet for user
+      operationId: createWallet
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserWalletRequest"
+        required: true
+      responses:
+        "201":
+          description: Wallet created successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseDTOUserWalletResponse"
+        "400":
+          description: Invalid request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseDTOUserWalletResponse"
+  /api/user/subscriptions:
+    post:
+      tags:
+      - User - Subscriptions
+      summary: Create subscription
+      description: |
+        Create a new locked-term subscription for the user wallet.
+        The principal amount will be locked until maturity date.
+      operationId: createSubscription
+      parameters:
+      - name: X-WALLET-ID
+        in: header
+        description: User wallet identifier
+        required: true
+        schema:
+          type: string
+        example: 3ff732cb-cf34-41fe-b587-3d2e8cb93c68
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSubscriptionRequest"
+        required: true
+      responses:
+        "201":
+          description: Subscription created successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseDTOSubscriptionResponse"
+        "400":
+          description: Invalid request payload
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseDTOSubscriptionResponse"
+        "409":
+          description: Insufficient quota or duplicated subscription
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseDTOSubscriptionResponse"
+  /api/cms/subscriptions/jobs/daily-interest:
+    post:
+      tags:
+      - CMS - Subscription Jobs
+      summary: Trigger daily interest accrual job
+      description: |
+        Manually trigger daily interest accrual job.
+        This endpoint is used for CMS operations, testing scheduled jobs,
+        or re-running interest calculation for a specific date.
+      operationId: runDailyAccrual
+      parameters:
+      - name: date
+        in: query
+        description: "Execution date (yyyy-MM-dd). If not provided, defaults to today\
+          \ (GMT+7)."
+        required: false
+        schema:
+          type: string
+          format: date
+        example: 2026-02-23
+      responses:
+        "200":
+          description: Job executed successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseDTOBatchProcessResponse"
+        "400":
+          description: Invalid date format
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseDTOBatchProcessResponse"
+        "409":
+          description: Job already executed for the given date
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseDTOBatchProcessResponse"
+  /api/cms/locked-products:
+    get:
+      tags:
+      - CMS - Locked Products
+      summary: Get all locked products
+      description: Retrieve all locked-term saving products for CMS management
+      operationId: getAllProduct
+      responses:
+        "200":
+          description: List of locked products retrieved successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseDTOListLockedProductResponse"
+    post:
+      tags:
+      - CMS - Locked Products
+      summary: Create locked product
+      description: |
+        Create a new locked-term saving product.
+        This product will be available for user subscriptions after creation.
+      operationId: createLockedProduct
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LockedProductRequest"
+        required: true
+      responses:
+        "201":
+          description: Locked product created successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseDTOLockedProductResponse"
+        "400":
+          description: Invalid request payload
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseDTOLockedProductResponse"
+        "409":
+          description: Product conflict or duplicated configuration
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseDTOLockedProductResponse"
+  /api/cms/liquidity-pool:
+    get:
+      tags:
+      - CMS - Liquidity Pool
+      summary: Get all liquidity pool
+      description: Retrieve all existing liquidity pool for CMS monitoring
+      operationId: getAll
+      responses:
+        "200":
+          description: List of liquidity pool retrieved successfully
+          content:
+            application/json:
+              example:
+                code: SUCCESS
+                message: Retrieved liquidity pools successfully
+                data:
+                - id: ' x019c6f62b1d6afcffcfb4323b3dc7c52'
+                  totalAmount: 100000
+                  minThreshold: 50000
+                  status: NORMAL
+    post:
+      tags:
+      - CMS - Liquidity Pool
+      summary: Create liquidity pool
+      description: Create a new liquidity pool used for locked-term investment products
+      operationId: create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LiquidityPoolRequest"
+        required: true
+      responses:
+        "400":
+          description: Invalid request payload
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseDTOVoid"
+        "201":
+          description: Liquidity pool created successfully
+          content:
+            application/json:
+              example:
+                code: CREATED
+                message: Created liquidity pools successfully
+                data:
+                - {}
+  /api/cms/liquidity-pool/inject:
+    post:
+      tags:
+      - CMS - Liquidity Pool
+      summary: Inject liquidity into pool
+      description: |
+        Admin operation to inject funds into a liquidity pool.
+        This action increases available liquidity for subscriptions.
+      operationId: inject
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InjectionRequest"
+        required: true
+      responses:
+        "201":
+          description: Liquidity injected successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseDTOAdminInjectionResponse"
+        "400":
+          description: Invalid injection request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseDTOAdminInjectionResponse"
+        "404":
+          description: Liquidity pool not found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseDTOAdminInjectionResponse"
+        "409":
+          description: Injection ´œconflict or duplicated request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseDTOAdminInjectionResponse"
+  /api/user/subscriptions/registered-today:
+    get:
+      tags:
+      - User - Subscriptions
+      summary: Get subscriptions created today
+      description: "Retrieve subscriptions that were created today (system date, GMT+7)"
+      operationId: getSubscribeToday
+      parameters:
+      - name: X-WALLET-ID
+        in: header
+        description: User wallet identifier
+        required: true
+        schema:
+          type: string
+        example: 3ff732cb-cf34-41fe-b587-3d2e8cb93c68
+      responses:
+        "200":
+          description: List of subscriptions created today
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseDTOListSubscriptionResponse"
+  /api/user/subscriptions/history:
+    get:
+      tags:
+      - User - Subscriptions
+      summary: Get subscription history
+      description: Retrieve all subscriptions associated with the given wallet
+      operationId: getHistorySubscribe
+      parameters:
+      - name: X-WALLET-ID
+        in: header
+        description: User wallet identifier
+        required: true
+        schema:
+          type: string
+        example: 3ff732cb-cf34-41fe-b587-3d2e8cb93c68
+      responses:
+        "200":
+          description: Subscription history retrieved successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseDTOListSubscriptionResponse"
+        "400":
+          description: Missing or invalid wallet id
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseDTOListSubscriptionResponse"
+  /api/user/subscriptions/active:
+    get:
+      tags:
+      - User - Subscriptions
+      operationId: getActiveSubscribe
+      parameters:
+      - name: X-WALLET-ID
+        in: header
+        description: User wallet identifier
+        required: true
+        schema:
+          type: string
+        example: 3ff732cb-cf34-41fe-b587-3d2e8cb93c68
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseDTOListActivePackageResponse"
+  /api/user/locked-products/operating:
+    get:
+      tags:
+      - User - Locked Products
+      summary: Get operating locked products
+      description: |
+        Retrieve locked products that are currently operating.
+        Operating products may still accrue interest but may not accept new subscriptions.
+      operationId: getOperatingProducts
+      responses:
+        "200":
+          description: List of operating locked products
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseDTOListLockedProductResponse"
+  /api/user/locked-products/active:
+    get:
+      tags:
+      - User - Locked Products
+      summary: Get active locked products
+      description: |
+        Retrieve all active locked-term saving products.
+        Active products are available for new subscriptions.
+      operationId: getActiveProducts
+      responses:
+        "200":
+          description: List of active locked products
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseDTOListLockedProductResponse"
+  /api/cms/subscriptions/jobs/registered-today:
+    get:
+      tags:
+      - CMS - Subscription Jobs
+      summary: Get subscriptions created today
+      description: "Retrieve subscriptions that were created today (system date, GMT+7)"
+      operationId: getSubscribeToday_1
+      responses:
+        "200":
+          description: List of subscriptions created today
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseDTOListSubscriptionResponse"
+  /api/cms/locked-products/{id}:
+    get:
+      tags:
+      - CMS - Locked Products
+      summary: Get locked product by id
+      description: Retrieve detailed information of a locked-term saving product by
+        its ID
+      operationId: getProductById
+      parameters:
+      - name: id
+        in: path
+        description: Locked product ID
+        required: true
+        schema:
+          type: integer
+          format: int64
+        example: 1
+      responses:
+        "200":
+          description: Locked product retrieved successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseDTOLockedProductResponse"
+        "404":
+          description: Locked product not found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseDTOLockedProductResponse"
+  /api/cms/user-wallets/{walletId}:
+    delete:
+      tags:
+      - CMS - User Wallet
+      summary: Delete user wallet
+      description: |
+        Permanently delete a user wallet.
+        This operation is irreversible and should only be used by CMS/admin users.
+      operationId: deleteUserWallet
+      parameters:
+      - name: walletId
+        in: path
+        description: Wallet identifier
+        required: true
+        schema:
+          type: string
+        example: 3ff732cb-cf34-41fe-b587-3d2e8cb93c68
+      responses:
+        "204":
+          description: Wallet deleted successfully
+        "404":
+          description: Wallet not found
+        "409":
+          description: Wallet cannot be deleted due to active subscriptions
+components:
+  schemas:
+    UserWalletRequest:
+      type: object
+      properties:
+        balanceAvailable:
+          type: number
+    ApiResponseDTOUserWalletResponse:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        data:
+          $ref: "#/components/schemas/UserWalletResponse"
+    UserWalletResponse:
+      type: object
+      properties:
+        walletId:
+          type: string
+          format: uuid
+        totalBalance:
+          type: number
+        balanceAvailable:
+          type: number
+        balanceFrozen:
+          type: number
+        status:
+          type: string
+    CreateSubscriptionRequest:
+      type: object
+      properties:
+        productId:
+          type: integer
+          format: int64
+        principal:
+          type: number
+    ApiResponseDTOSubscriptionResponse:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        data:
+          $ref: "#/components/schemas/SubscriptionResponse"
+    SubscriptionResponse:
+      type: object
+      properties:
+        subscriptionID:
+          type: string
+          format: uuid
+        walletId:
+          type: string
+          format: uuid
+        lockedProductId:
+          type: integer
+          format: int64
+        principal:
+          type: number
+        interestRate:
+          type: number
+        termDays:
+          type: integer
+          format: int32
+        totalInterest:
+          type: number
+        startDate:
+          type: string
+          format: date
+        maturityDate:
+          type: string
+          format: date
+        status:
+          type: string
+    ApiResponseDTOBatchProcessResponse:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        data:
+          $ref: "#/components/schemas/BatchProcessResponse"
+    BatchProcessResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - SUCCESS
+          - PARTIAL_SUCCESS
+          - FAILED
+        date:
+          type: string
+          format: date
+        summary:
+          $ref: "#/components/schemas/Summary"
+        skippedItems:
+          type: array
+          items:
+            $ref: "#/components/schemas/SkippedItemResponse"
+    SkippedItemResponse:
+      type: object
+      properties:
+        subscriptionId:
+          type: string
+        earningId:
+          type: integer
+          format: int64
+        reason:
+          type: string
+    Summary:
+      type: object
+      properties:
+        total:
+          type: integer
+          format: int32
+        processed:
+          type: integer
+          format: int32
+        skipped:
+          type: integer
+          format: int32
+        ignored:
+          type: integer
+          format: int32
+    LockedProductRequest:
+      type: object
+      properties:
+        termDays:
+          type: integer
+          format: int32
+          minimum: 1
+        interestRate:
+          type: number
+          minimum: 0.0
+        minAmount:
+          type: number
+        maxAmount:
+          type: number
+        totalQuota:
+          type: number
+        description:
+          type: string
+          maxLength: 500
+          minLength: 0
+      required:
+      - description
+      - interestRate
+      - maxAmount
+      - minAmount
+      - termDays
+      - totalQuota
+    ApiResponseDTOLockedProductResponse:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        data:
+          $ref: "#/components/schemas/LockedProductResponse"
+    LockedProductResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        termDays:
+          type: integer
+          format: int32
+        interestRate:
+          type: number
+        minAmount:
+          type: number
+        maxAmount:
+          type: number
+        totalQuota:
+          type: number
+        availableQuota:
+          type: number
+        status:
+          type: string
+    LiquidityPoolRequest:
+      type: object
+      properties:
+        minThreshold:
+          type: number
+    ApiResponseDTOVoid:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        data: {}
+    InjectionRequest:
+      type: object
+      properties:
+        amount:
+          type: number
+        note:
+          type: string
+          minLength: 1
+      required:
+      - amount
+      - note
+    AdminInjectionResponse:
+      type: object
+      properties:
+        txId:
+          type: string
+          format: byte
+        amount:
+          type: number
+        liquidityBefore:
+          type: number
+        liquidityAfter:
+          type: number
+        note:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+    ApiResponseDTOAdminInjectionResponse:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        data:
+          $ref: "#/components/schemas/AdminInjectionResponse"
+    ApiResponseDTOListSubscriptionResponse:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/SubscriptionResponse"
+    ActivePackageResponse:
+      type: object
+      properties:
+        subscriptionId:
+          type: string
+          format: uuid
+        earningId:
+          type: integer
+          format: int64
+        productId:
+          type: integer
+          format: int64
+        startDate:
+          type: string
+          format: date
+        maturityDate:
+          type: string
+          format: date
+        principal:
+          type: number
+        interestRte:
+          type: number
+        accruedInterest:
+          type: number
+        holdingDays:
+          type: integer
+          format: int32
+        progress:
+          type: number
+        available:
+          type: number
+    ApiResponseDTOListActivePackageResponse:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/ActivePackageResponse"
+    ApiResponseDTOListLockedProductResponse:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/LockedProductResponse"

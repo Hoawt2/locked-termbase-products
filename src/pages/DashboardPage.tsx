@@ -1,6 +1,7 @@
 import { useLanguage } from '@/contexts/LanguageContext';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { Link } from 'react-router-dom';
+import { fetchActivePackages } from '@/pages/ActivePackagesPage';
 import { Button } from '@/components/ui/button';
 import {
   Wallet,
@@ -9,24 +10,34 @@ import {
   ArrowUpRight,
   Package,
   ChevronRight,
-  Info
+  Info,
+  DollarSign
 } from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { useQuery } from '@tanstack/react-query';
 
-// Mock data
+// Fetch wallet data from API
+const fetchWalletData = async () => {
+  const walletId = localStorage.getItem('X-WALLET-ID');
+  if (!walletId) return null;
+
+  const response = await fetch('/api/user/wallet', {
+    headers: { 'X-WALLET-ID': walletId },
+  });
+
+  if (!response.ok) throw new Error('Failed to fetch wallet');
+  const result = await response.json();
+  return result.data;
+};
+
+// Mock data (non-wallet)
 const dashboardData = {
-  totalBalance: 125750.00,
-  availableBalance: 45750.00,
-  frozenBalance: 80000.00,
   totalInterest: 2340.50,
-  activePackages: [
-    { id: 1, name: '90-Day Lock', principal: 50000, apr: 12.0, progress: 45, maturityDate: '2024-03-15' },
-    { id: 2, name: '60-Day Lock', principal: 30000, apr: 10.2, progress: 72, maturityDate: '2024-02-28' },
-  ],
+  available: 1250.75,
   recentActivity: [
     { id: 1, type: 'dailyInterest', amount: 16.44, date: '2024-01-15', status: 'success' },
     { id: 2, type: 'earlyRedemption', amount: 30000, date: '2024-01-10', status: 'success' },
@@ -87,6 +98,22 @@ function BalanceCard({
 export default function DashboardPage() {
   const { t } = useLanguage();
 
+  const { data: walletData } = useQuery({
+    queryKey: ['walletData'],
+    queryFn: fetchWalletData,
+  });
+
+  const { data: activePackages = [] } = useQuery({
+    queryKey: ['activePackages'],
+    queryFn: fetchActivePackages,
+  });
+
+  const totalBalance = walletData?.totalBalance ?? 0;
+  const availableBalance = walletData?.balanceAvailable ?? 0;
+  const frozenBalance = walletData?.balanceFrozen ?? 0;
+
+  const displayedPackages = activePackages.slice(0, 5);
+
   return (
     <MainLayout>
       <div className="p-6 max-w-7xl mx-auto">
@@ -97,21 +124,21 @@ export default function DashboardPage() {
         </div>
 
         {/* Balance Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
           <BalanceCard
             title={t('dashboard.totalBalance')}
-            value={dashboardData.totalBalance}
+            value={totalBalance}
             icon={Wallet}
           />
           <BalanceCard
             title={t('dashboard.availableBalance')}
-            value={dashboardData.availableBalance}
+            value={availableBalance}
             icon={ArrowUpRight}
             tooltip={t('tooltip.availableBalance')}
           />
           <BalanceCard
             title={t('dashboard.frozenBalance')}
-            value={dashboardData.frozenBalance}
+            value={frozenBalance}
             icon={Lock}
             tooltip={t('tooltip.frozenBalance')}
           />
@@ -120,6 +147,12 @@ export default function DashboardPage() {
             value={dashboardData.totalInterest}
             icon={TrendingUp}
             accent
+          />
+          <BalanceCard
+            title="Available"
+            value={dashboardData.available}
+            icon={DollarSign}
+            tooltip="Total available amount ready for withdrawal"
           />
         </div>
 
@@ -137,31 +170,37 @@ export default function DashboardPage() {
             </div>
 
             <div className="space-y-4">
-              {dashboardData.activePackages.map((pkg) => (
-                <div key={pkg.id} className="p-4 bg-secondary/30 rounded-lg">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-accent/10 rounded-lg flex items-center justify-center">
-                        <Package className="w-5 h-5 text-accent" />
+              {displayedPackages.length === 0 && (
+                <p className="text-sm text-muted-foreground text-center py-4">No active packages</p>
+              )}
+              {displayedPackages.map((pkg) => {
+                const progress = Math.round((pkg.holdingDays / pkg.totalDays) * 100);
+                return (
+                  <div key={pkg.id} className="p-4 bg-secondary/30 rounded-lg">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-accent/10 rounded-lg flex items-center justify-center">
+                          <Package className="w-5 h-5 text-accent" />
+                        </div>
+                        <div>
+                          <p className="font-medium">{pkg.productName}</p>
+                          <p className="text-sm text-muted-foreground">
+                            ${pkg.principal.toLocaleString()} • {pkg.interestRate}% APR
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="font-medium">{pkg.name}</p>
-                        <p className="text-sm text-muted-foreground">
-                          ${pkg.principal.toLocaleString()} • {pkg.apr}% APR
-                        </p>
+                      <div className="text-right">
+                        <p className="text-sm text-muted-foreground">{t('packages.maturityDate')}</p>
+                        <p className="font-medium">{pkg.maturityDate}</p>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <p className="text-sm text-muted-foreground">{t('packages.maturityDate')}</p>
-                      <p className="font-medium">{pkg.maturityDate}</p>
+                    <div className="progress-track">
+                      <div className="progress-fill" style={{ width: `${progress}%` }} />
                     </div>
+                    <p className="text-xs text-muted-foreground mt-2">{progress}% complete</p>
                   </div>
-                  <div className="progress-track">
-                    <div className="progress-fill" style={{ width: `${pkg.progress}%` }} />
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-2">{pkg.progress}% complete</p>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 

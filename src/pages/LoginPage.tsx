@@ -12,6 +12,7 @@ export default function LoginPage() {
     const navigate = useNavigate();
     const [accountId, setAccountId] = useState('');
     const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     // Redirect to dashboard if already logged in
     useEffect(() => {
@@ -23,21 +24,50 @@ export default function LoginPage() {
         }
     }, [navigate]);
 
-    const handleLogin = (role: 'admin' | 'user') => {
+    const handleLogin = async (role: 'admin' | 'user') => {
         if (!accountId.trim()) {
             setError('Please enter your Wallet ID or Admin ID to continue');
             return;
         }
 
         setError('');
-        localStorage.setItem('userRole', role);
+        setIsLoading(true);
 
         if (role === 'admin') {
+            localStorage.setItem('userRole', role);
             localStorage.setItem('admin_id', accountId.trim());
+            setIsLoading(false);
             navigate('/admin/liquidity');
         } else {
-            localStorage.setItem('wallet_id', accountId.trim());
-            navigate('/dashboard');
+            try {
+                const response = await fetch('/api/user/wallet', {
+                    headers: {
+                        'X-WALLET-ID': accountId.trim(),
+                    },
+                });
+
+                if (!response.ok) {
+                    setError('Wallet ID không tồn tại. Vui lòng thử lại.');
+                    setIsLoading(false);
+                    return;
+                }
+
+                const result = await response.json();
+                if (!result.data) {
+                    setError('Wallet ID không tồn tại. Vui lòng thử lại.');
+                    setIsLoading(false);
+                    return;
+                }
+
+                localStorage.setItem('userRole', role);
+                localStorage.setItem('wallet_id', accountId.trim());
+                localStorage.setItem('X-WALLET-ID', accountId.trim());
+                setIsLoading(false);
+                navigate('/dashboard');
+            } catch (err) {
+                setError('Không thể kết nối đến server. Vui lòng thử lại.');
+                setIsLoading(false);
+            }
         }
     };
 
@@ -80,17 +110,19 @@ export default function LoginPage() {
                     {/* User Role Card */}
                     <button
                         onClick={() => handleLogin('user')}
+                        disabled={isLoading}
                         className={cn(
                             "p-6 rounded-2xl border-2 transition-all duration-300",
                             "border-border hover:border-accent hover:bg-accent/5",
-                            "flex flex-col items-center gap-4 text-center group"
+                            "flex flex-col items-center gap-4 text-center group",
+                            isLoading && "opacity-50 cursor-not-allowed"
                         )}
                     >
                         <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center group-hover:bg-accent/20 transition-colors">
                             <User className="w-6 h-6 text-muted-foreground group-hover:text-accent transition-colors" />
                         </div>
                         <div>
-                            <h3 className="font-semibold text-lg">Investor</h3>
+                            <h3 className="font-semibold text-lg">{isLoading ? 'Verifying...' : 'Investor'}</h3>
                             <p className="text-sm text-muted-foreground mt-1">
                                 Login using Wallet ID
                             </p>
@@ -100,10 +132,12 @@ export default function LoginPage() {
                     {/* Admin Role Card */}
                     <button
                         onClick={() => handleLogin('admin')}
+                        disabled={isLoading}
                         className={cn(
                             "p-6 rounded-2xl border-2 transition-all duration-300",
                             "border-border hover:border-destructive hover:bg-destructive/5",
-                            "flex flex-col items-center gap-4 text-center group"
+                            "flex flex-col items-center gap-4 text-center group",
+                            isLoading && "opacity-50 cursor-not-allowed"
                         )}
                     >
                         <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center group-hover:bg-destructive/20 transition-colors">

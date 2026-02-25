@@ -24,53 +24,78 @@ import {
 } from '@/components/ui/dialog';
 import { useState } from 'react';
 
-// Mock data
-const activePackages = [
-  {
-    id: 1,
-    productName: '90-Day Lock',
-    principal: 50000,
-    interestRate: 12.0,
-    accruedInterest: 986.30,
-    holdingDays: 41,
-    totalDays: 90,
-    startDate: '2024-01-05',
-    maturityDate: '2024-04-05',
-    availableAmount: 500,
-    earlyRedemptionEligible: true,
-    penaltyRate: 3.5,
-  },
-  {
-    id: 2,
-    productName: '60-Day Lock',
-    principal: 30000,
-    interestRate: 10.2,
-    accruedInterest: 420.80,
-    holdingDays: 25,
-    totalDays: 60,
-    startDate: '2024-01-10',
-    maturityDate: '2024-03-10',
-    availableAmount: 200,
-    earlyRedemptionEligible: true,
-    penaltyRate: 2.5,
-  },
-  {
-    id: 3,
-    productName: '30-Day Lock',
-    principal: 10000,
-    interestRate: 8.5,
-    accruedInterest: 58.20,
-    holdingDays: 8,
-    totalDays: 30,
-    startDate: '2024-01-20',
-    maturityDate: '2024-02-19',
-    availableAmount: 0,
-    earlyRedemptionEligible: false,
-    penaltyRate: 5.0,
-  },
-];
+import { useQuery } from '@tanstack/react-query';
 
-function EarlyRedemptionDialog({ pkg }: { pkg: typeof activePackages[0] }) {
+interface ActionPackageResponse {
+  subscriptionId: string;
+  earningId: number;
+  productId: number;
+  startDate: string;
+  maturityDate: string;
+  principal: number;
+  interestRte: number;
+  accruedInterest: number;
+  holdingDays: number;
+  progress: number;
+  available: number;
+}
+
+export interface PackageData {
+  id: string;
+  productName: string;
+  principal: number;
+  interestRate: number;
+  accruedInterest: number;
+  holdingDays: number;
+  totalDays: number;
+  startDate: string;
+  maturityDate: string;
+  availableAmount: number;
+  earlyRedemptionEligible: boolean;
+  penaltyRate: number;
+}
+
+export const fetchActivePackages = async (): Promise<PackageData[]> => {
+  const walletId = localStorage.getItem('X-WALLET-ID');
+  // For safety, providing an empty array if no wallet ID exists yet
+  if (!walletId) return [];
+
+  const response = await fetch('/api/user/subscriptions/active', {
+    headers: {
+      'X-WALLET-ID': walletId,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch active packages');
+  }
+
+  const result = await response.json();
+  const data: ActionPackageResponse[] = result.data || [];
+
+  return data.map((pkg) => {
+    const start = new Date(pkg.startDate);
+    const maturity = new Date(pkg.maturityDate);
+    const termDays = (Math.round((maturity.getTime() - start.getTime()) / (1000 * 60 * 60 * 24))) + 1;
+
+    return {
+      id: pkg.subscriptionId,
+      productName: `${termDays}-Lock Day`,
+      principal: pkg.principal,
+      interestRate: pkg.interestRte ? Math.round(pkg.interestRte * 10000) / 100 : 0,
+      accruedInterest: pkg.accruedInterest || 0,
+      holdingDays: pkg.holdingDays || 0,
+      totalDays: termDays || 1,
+      startDate: pkg.startDate,
+      maturityDate: pkg.maturityDate,
+      availableAmount: pkg.available || 0,
+      earlyRedemptionEligible: true,
+      penaltyRate: 3.5,
+    };
+  });
+};
+
+function EarlyRedemptionDialog({ pkg }: { pkg: PackageData }) {
   const { t } = useLanguage();
   const [isConfirming, setIsConfirming] = useState(false);
 
@@ -162,6 +187,11 @@ function EarlyRedemptionDialog({ pkg }: { pkg: typeof activePackages[0] }) {
 
 export default function ActivePackagesPage() {
   const { t } = useLanguage();
+
+  const { data: activePackages = [], isLoading, error } = useQuery({
+    queryKey: ['activePackages'],
+    queryFn: fetchActivePackages,
+  });
 
   return (
     <MainLayout>
