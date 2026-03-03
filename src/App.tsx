@@ -18,6 +18,7 @@ import NotificationsPage from "./pages/NotificationsPage";
 import AdminLiquidityPage from "./pages/admin/AdminLiquidityPage";
 import AdminPendingPage from "./pages/admin/AdminPendingPage";
 import AdminManualPage from "./pages/admin/AdminManualPage";
+import AdminCreateProductPage from "./pages/admin/AdminCreateProductPage";
 import LoginPage from "./pages/LoginPage";
 import NotFound from "./pages/NotFound";
 
@@ -51,6 +52,7 @@ const App = () => (
             <Route path="/admin/liquidity" element={<AdminLiquidityPage />} />
             <Route path="/admin/pending" element={<AdminPendingPage />} />
             <Route path="/admin/manual" element={<AdminManualPage />} />
+            <Route path="/admin/products/create" element={<AdminCreateProductPage />} />
 
             {/* Catch-all */}
             <Route path="*" element={<NotFound />} />

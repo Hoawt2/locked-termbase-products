@@ -300,8 +300,13 @@ export default function AdminLiquidityPage() {
               ) : (
                 ledgerHistory.map((entry: any, index: number) => (
                   <div key={index} className="flex items-center justify-between py-2 border-b border-border/50 last:border-0">
-                    <div>
-                      <p className="font-medium">Amount: ${(entry.amount || 0).toLocaleString()}</p>
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-center gap-2">
+                        <p className="font-medium text-base">Amount: ${(entry.amount || 0).toLocaleString()}</p>
+                        <span className="text-xs text-muted-foreground bg-secondary/50 px-2 py-0.5 rounded-full">
+                          {entry.created_at ? new Date(entry.created_at).toLocaleString() : 'Just now'}
+                        </span>
+                      </div>
                       <p className="text-sm text-muted-foreground">Available After: ${(entry.availableAfter || 0).toLocaleString()}</p>
                     </div>
                     <div className={`flex items-center gap-1 ${(entry.amount || 0) > 0 ? 'text-success' : 'text-warning'}`}>

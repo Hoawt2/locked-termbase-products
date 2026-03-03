@@ -1242,6 +1242,9 @@ components:
           type: number
         availableAfter:
           type: number
+        created_at:
+          type: string
+          format: date-time
     ApiResponseDTOSumInterestPerDay:
       type: object
       properties:

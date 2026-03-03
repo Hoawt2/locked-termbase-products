@@ -14,6 +14,7 @@ import {
   ChevronRight,
   LogOut,
   ArrowDownToLine,
+  PackagePlus,
 } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
@@ -44,6 +45,7 @@ export function Sidebar({ isAdmin: propIsAdmin = false }: SidebarProps) {
     { to: '/admin/liquidity', icon: Droplets, label: t('nav.liquidity') },
     { to: '/admin/pending', icon: Clock, label: t('nav.pending') },
     { to: '/admin/manual', icon: Wrench, label: t('nav.manual') },
+    { to: '/admin/products/create', icon: PackagePlus, label: 'Create Product' },
   ];
 
   const links = isAdmin ? adminLinks : userLinks;
